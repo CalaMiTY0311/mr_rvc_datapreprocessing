@@ -1,13 +1,13 @@
 import os
+
 # 2stems = 보컬 + 배경 음악
 # 4stems = 보컬 + 드럼 + 베이스 + 나머지
 # 5stems = 보컬 + 드럼 + 베이스 + 피아노 + 나머지
-
-stems = str(input('stems 선택 : 2, 4, 5 >>>'))
-
-path = str(input(r'파일이 있는 경로를 정해주세요. >>>'))
+stems = 2
+path = 'song_dir'
 os.chdir(path)
-file_name = str(input('음악 파일의 이름을 적어주세요. >>>'))
+
+file_name = ''                                  # <------------------ 노래(Lemon.mp3 라면 Lemon만 치셈)
 
 nsfile_name = file_name.replace(' ', '_')
 
@@ -20,6 +20,8 @@ spl = r'spleeter separate -p spleeter:' + \
     str(stems)+r'stems -o output '+nsfile_name+'.mp3'
 # 'spleeter separate -p spleeter:2stems -o output my_song.mp3'
 os.system(spl)
+
+
 
 
 # import shutil
