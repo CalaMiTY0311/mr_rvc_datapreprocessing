@@ -15,7 +15,7 @@ def data_processing():
         if wav_file.endswith('.wav'):
             wav_path = os.path.join(input_dir, wav_file)
 
-            y, sr = librosa.load(wav_path, sr=44100, mono=True)
+            y, sr = librosa.load(wav_path, sr=22050, mono=True)
 
             for i, start in enumerate(range(0, len(y), interval_seconds * sr), 1):
                 segment = y[start:start + interval_seconds * sr]
