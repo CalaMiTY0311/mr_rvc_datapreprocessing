@@ -1,39 +1,76 @@
 import librosa
 import numpy as np
 import os
+import random, string
 import soundfile as sf
 from pydub import AudioSegment
+import shutil
 
 import zipfile
 
 class data_processing:
-    def __init__(self, dataset_dir, interval_seconds):
+    def __init__(self, dataset_dir, interval_seconds, wav_id):
         self.dataset_dir = dataset_dir
         self.interval_seconds = interval_seconds
+        self.wav_id = wav_id
+    
+    def processing(self,file):
 
-    def processing(self):
+        wav_dir = os.path.join(self.dataset_dir, self.wav_id)
+        os.makedirs(wav_dir, exist_ok=True)
 
-        for wav_file in os.listdir(self.dataset_dir):
+        wav_path = os.path.join(wav_dir, file.filename)
 
-            if wav_file.endswith('.wav'):
-                wav_path = os.path.join(self.dataset_dir, wav_file)
+        with open(wav_path, "wb") as f:
+            shutil.copyfileobj(file.file, f)
 
-                y, sr = librosa.load(wav_path, sr=22050, mono=True)
+        y, sr = librosa.load(wav_path, sr=22050, mono=True)
+        for i, start in enumerate(range(0, len(y), self.interval_seconds * sr), 1):
+            segment = y[start:start + self.interval_seconds * sr]
+            output_file = os.path.join(wav_dir, f"dataset_{i - 1}.wav")
+            sf.write(output_file, segment, sr, subtype='PCM_16')
+        
+        os.remove(wav_path)
 
-                for i, start in enumerate(range(0, len(y), self.interval_seconds * sr), 1):
-                    segment = y[start:start + self.interval_seconds * sr]
-                    output_file = os.path.join(self.dataset_dir, f"dataset_{i - 1}.wav")
-                    sf.write(output_file, segment, sr, subtype='PCM_16')
-
-        zip_name = 'dataset.zip'
-        zip_path = os.path.join(self.dataset_dir, zip_name)
-        with zipfile.ZipFile(zip_path, 'w') as zipf:
-            for wav_file in os.listdir(self.dataset_dir):
-                if wav_file.endswith('.wav'):
-                    wav_path = os.path.join(self.dataset_dir, wav_file)
-                    zipf.write(wav_path, arcname=os.path.basename(wav_path))
+        # zip_name = 'dataset.zip'
+        # zip_path = os.path.join(wav_dir, zip_name)
+        # with zipfile.ZipFile(zip_path, 'w') as zipf:
+        #     for wav_file in os.listdir(self.dataset_dir):
+        #         if wav_file.endswith('.wav'):
+        #             wav_path = os.path.join(wav_dir, wav_file)
+        #             zipf.write(wav_path, arcname=os.path.basename(wav_path))
 
         return print("데이터를 성공적으로 분할하였습니다.")
+    
+
+
+
+
+
+# def processing(self):
+
+#         for wav_file in os.listdir(self.dataset_dir):
+
+#             if wav_file.endswith('.wav'):
+#                 wav_path = os.path.join(self.dataset_dir, wav_file)
+
+#                 y, sr = librosa.load(wav_path, sr=22050, mono=True)
+
+#                 for i, start in enumerate(range(0, len(y), self.interval_seconds * sr), 1):
+#                     segment = y[start:start + self.interval_seconds * sr]
+#                     output_file = os.path.join(self.dataset_dir, f"dataset_{i - 1}.wav")
+#                     sf.write(output_file, segment, sr, subtype='PCM_16')
+
+#         zip_name = 'dataset.zip'
+#         zip_path = os.path.join(self.dataset_dir, zip_name)
+#         with zipfile.ZipFile(zip_path, 'w') as zipf:
+#             for wav_file in os.listdir(self.dataset_dir):
+#                 if wav_file.endswith('.wav'):
+#                     wav_path = os.path.join(self.dataset_dir, wav_file)
+#                     zipf.write(wav_path, arcname=os.path.basename(wav_path))
+
+#         return print("데이터를 성공적으로 분할하였습니다.")
+
 
 # from pydub import AudioSegment
 # mp3_file = 'bbb.mp3' 
