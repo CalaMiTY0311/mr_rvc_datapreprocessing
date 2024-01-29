@@ -3,7 +3,6 @@ import numpy as np
 import os
 import random, string
 import soundfile as sf
-from pydub import AudioSegment
 import shutil
 
 import zipfile
@@ -13,9 +12,9 @@ class data_processing:
         self.dataset_dir = dataset_dir
         self.interval_seconds = interval_seconds
         self.wav_id = wav_id
-    
-    def processing(self,file):
 
+    def processing(self,file):
+        
         wav_dir = os.path.join(self.dataset_dir, self.wav_id)
         os.makedirs(wav_dir, exist_ok=True)
 
@@ -23,6 +22,11 @@ class data_processing:
 
         with open(wav_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
+
+        if file.filename.lower().endswith('.mp3') or file.filename.lower().endswith('.m4a'):
+            path = os.path.join(wav_dir, file.filename)
+            wav_path = os.path.splitext(path)[0] + '.wav'
+            os.rename(path, wav_path)
 
         y, sr = librosa.load(wav_path, sr=22050, mono=True)
         for i, start in enumerate(range(0, len(y), self.interval_seconds * sr), 1):
@@ -32,15 +36,19 @@ class data_processing:
         
         os.remove(wav_path)
 
-        # zip_name = 'dataset.zip'
-        # zip_path = os.path.join(wav_dir, zip_name)
-        # with zipfile.ZipFile(zip_path, 'w') as zipf:
-        #     for wav_file in os.listdir(self.dataset_dir):
-        #         if wav_file.endswith('.wav'):
-        #             wav_path = os.path.join(wav_dir, wav_file)
-        #             zipf.write(wav_path, arcname=os.path.basename(wav_path))
+        zip_path = os.path.join(wav_dir, 'dataset.zip')
 
-        return print("데이터를 성공적으로 분할하였습니다.")
+        with zipfile.ZipFile(zip_path, 'w') as zipf:
+            for file_name in os.listdir(wav_dir):
+                if file_name.lower().endswith('.wav'):
+                    file_path = os.path.join(wav_dir, file_name)
+                    zipf.write(file_path, os.path.basename(file_path))
+        
+        for wav_file in os.listdir(wav_dir):
+            if wav_file.endswith('.wav'):
+                os.remove(os.path.join(wav_dir, wav_file))
+        
+        return zip_path
     
 
 
