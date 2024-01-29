@@ -11,6 +11,7 @@ import os
 import random, string
 
 from audio_processor.setting_dataset import data_processing
+from audio_processor.setting_mr import mr
 
 app = FastAPI()
 
@@ -34,7 +35,15 @@ async def processing(file: UploadFile = File(...)):
     path = await make_dataset(file)
     return FileResponse(path, filename="dataset.zip", media_type="application/zip")
 
-# async def make_separation(file: UploadFile):
+
+async def make_mr(file: UploadFile):
+    id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+    separation = mr('audio_processor/separation',id, 5)
+    output_path = separation.separating(file)
+
+@app.post("/make_mr/")
+async def song_mr(file: UploadFile = File(...)):
+    path = await make_mr(file)
     
 
 

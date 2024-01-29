@@ -28,11 +28,31 @@ import shutil
 # os.system(spl)
 # print('분리 완료')
 
-class song_separation:
-    def __init__(self, stems):
+class mr:
+    def __init__(self, mr_dir, mr_id, stems):
+        self.mr_dir = mr_dir
+        self.mr_id = mr_id
         self.stems = stems
 
-    def separation(self, file):
+    def separating(self, file):
+        mr_dir = os.path.join(self.mr_dir, self.mr_id)
+        os.makedirs(mr_dir, exist_ok=True)
+
+        path = os.path.join(mr_dir, file.filename)
+
+        with open(path, "wb") as f:
+            shutil.copyfileobj(file.file, f)
+
+        return path        
+        # if file.filename.endswith('.wav') or file.filename.endswith('.m4a'):
+        #     path = os.path.join(separation_dir, file.filename)
+        #     mp3_path = os.path.splitext(path)[0] + '.mp3'
+        #     os.rename(path, mp3_path)
+        
+        
+
+
+        
         
 
         
