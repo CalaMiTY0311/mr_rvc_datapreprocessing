@@ -17,7 +17,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 실제 사용 시에는 특정 origin을 지정하는 것이 좋습니다.
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -38,13 +38,13 @@ async def processing(file: UploadFile = File(...)):
 
 async def make_mr(file: UploadFile):
     id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-    separation = mr('audio_processor/separation',id, 5)
+    separation = mr('audio_processor/mr',id, 2)
     output_path = separation.separating(file)
 
 @app.post("/make_mr/")
 async def song_mr(file: UploadFile = File(...)):
     path = await make_mr(file)
-    
+    return FileResponse(path, filename="result.zip", media_type="application/zip")
 
 
 
