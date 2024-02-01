@@ -1,7 +1,7 @@
 #export PATH=$PATH:/c/Users/axels/OneDrive/바탕\ 화면/translation_AI/ffmpeg-6.1.1-full_build/bin
 #export PATH=$PATH:/c/Users/axels/OneDrive/바탕\ 화면/translation_AI/ff_path
 
-from fastapi import FastAPI, File, UploadFile, HTTPException, background
+from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
@@ -32,6 +32,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+async def after_delete(path):
+    shutil.rmtree(path)
+
 async def make_dataset(file: UploadFile):
     wav_id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
     processor = data_processing('audio_processor/dataset', 15, wav_id)
@@ -48,14 +52,16 @@ async def processing(file: UploadFile = File(...)):
 async def make_mr(file: UploadFile):
     id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
     separation = mr('audio_processor/mr',id, 2)
-    zip_path = separation.separating(file)
-    return zip_path
+    zip_path, delete_path = separation.separating(file)
+    return zip_path, delete_path                  
 
 @app.post("/make_mr/")
-async def song_mr(file: UploadFile = File(...)):
-    zip_path = await make_mr(file)
-    return FileResponse(zip_path, filename='output.zip', media_type="application/zip")
+async def song_mr(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+    zip_path, delete_path = await make_mr(file)
 
+    background_tasks.add_task(after_delete, delete_path)
+
+    return FileResponse(zip_path, filename='output.zip', media_type="application/zip")
 
 
 

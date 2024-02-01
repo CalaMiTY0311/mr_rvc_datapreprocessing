@@ -37,7 +37,9 @@ class mr:
                     result = os.path.join(result_path, files)
                     zipf.write(result, os.path.basename(result))
         
-        return zip_path                    
+        delete_path = os.path.join(path, self.mr_id)
+        
+        return zip_path, delete_path                    
     
 
         # return zip_path
