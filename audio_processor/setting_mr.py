@@ -3,6 +3,7 @@ import shutil
 import zipfile 
 import subprocess
 
+
 class mr:
     def __init__(self, mr_dir, mr_id, stems):
         self.mr_dir = mr_dir
@@ -10,33 +11,36 @@ class mr:
         self.stems = stems
 
     def separating(self, file):
+
+        path = os.path.join(self.mr_dir)
         
-        save_song = os.path.join(self.mr_dir, file.filename)
+        save_song = os.path.join(path, file.filename)
         with open(save_song, "wb") as f:
             shutil.copyfileobj(file.file, f)
         get_file = file.filename
         name, _ = os.path.splitext(get_file)
 
-        os.chdir(self.mr_dir)
-        for song in os.listdir():
+        for song in os.listdir(path):
             if song == get_file:
                 spl = r'spleeter separate -p spleeter:' + \
-                str(self.stems) + r'stems -o ' + self.mr_id + ' ' + name + '.mp3'
-                # os.remove(get_file)
+                str(self.stems) + r'stems -o ' + os.path.join(path, self.mr_id) + ' ' + os.path.join(path, name) + '.mp3'
                 flag = subprocess.run(spl, shell=True)
-                os.remove(get_file)
+                os.remove(os.path.join(path, get_file))
 
-        zip_path = os.path.join(self.mr_id, name,'result.zip')
+        zip_name = f'{self.stems}_{name}.zip'
+        zip_path = os.path.join(path, self.mr_id, name, zip_name)
 
         with zipfile.ZipFile(zip_path, 'w') as zipf:
-            result_path = os.path.join(self.mr_id, name)
+            result_path = os.path.join(self.mr_dir, self.mr_id, name)
             for files in os.listdir(result_path):
                 if files.lower().endswith('.wav'):
-                    path = os.path.join(result_path, files)
-                    zipf.write(path, os.path.basename(path))
+                    result = os.path.join(result_path, files)
+                    zipf.write(result, os.path.basename(result))
+        
+        return zip_path                    
     
 
-        return zip_path
+        # return zip_path
     # def separating(self, file):
     #     mr_dir = os.path.join(self.mr_dir, self.mr_id)
     #     os.makedirs(mr_dir, exist_ok=True)
