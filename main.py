@@ -4,6 +4,7 @@
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException, BackgroundTasks
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import uvicorn
 import aiofiles
 import shutil
@@ -50,7 +51,6 @@ async def processing(background_tasks: BackgroundTasks, hz: int = Form(...), int
     return FileResponse(path, filename="dataset.zip", media_type="application/zip")
 
 
-
 async def make_mr(stems: Form, file: UploadFile):
     id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
     separation = mr('audio_processor/mr',id)
@@ -68,6 +68,13 @@ async def song_mr(
     background_tasks.add_task(after_delete, delete_path)
     return FileResponse(zip_path, filename=zip_name, media_type="application/zip")
 
+# async def add_mr(zip_file: UploadFile):
+#     id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+#     separation_to_add = mr('audio_processor/mr', id)
+
+# @app.post("/add_mr/")
+# async def add_song_mr(background_tasks: BackgroundTasks, zip_file: UploadFile = File(...)):
+    
 
 
 

@@ -38,5 +38,17 @@ class mr:
         
         delete_path = os.path.join(path, self.mr_id)
         
-        return zip_path, zip_name, delete_path                    
+        return zip_path, zip_name, delete_path
+    
+    def separate_to_add(self, zip_file):
+
+        path = os.path.join(self.mr_dir, self.mr_id)
+        os.makedirs(path, exist_ok=True) 
+
+        copy_path = os.path.join(path, zip_file.filename)
+
+        with open(copy_path, "wb") as f:
+            shutil.copyfileobj(zip_file.file, f)
+        
+        
     
