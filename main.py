@@ -1,7 +1,7 @@
 #export PATH=$PATH:/c/Users/axels/OneDrive/바탕\ 화면/translation_AI/ffmpeg-6.1.1-full_build/bin
 #export PATH=$PATH:/c/Users/axels/OneDrive/바탕\ 화면/translation_AI/ff_path
 
-from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
+from fastapi import FastAPI, File, Form, UploadFile, HTTPException, BackgroundTasks
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
@@ -36,32 +36,38 @@ app.add_middleware(
 async def after_delete(path):
     shutil.rmtree(path)
 
-async def make_dataset(file: UploadFile):
+async def make_dataset(hz: Form, interval_seconds: Form, file: UploadFile):
     wav_id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-    processor = data_processing('audio_processor/dataset', 15, wav_id)
-    zip_path = processor.processing(file)
+    processor = data_processing('audio_processor/dataset', interval_seconds, hz, wav_id)
+    zip_path, delete_path = processor.processing(file)
 
-    return zip_path
+    return zip_path, delete_path
 
 @app.post("/make_dataset/")
-async def processing(file: UploadFile = File(...)):
-    path = await make_dataset(file)
+async def processing(background_tasks: BackgroundTasks, hz: int = Form(...), interval_seconds: int = Form(...), file: UploadFile = File(...)):
+    path, delete_path = await make_dataset(hz, interval_seconds, file)
+    background_tasks.add_task(after_delete, delete_path)
     return FileResponse(path, filename="dataset.zip", media_type="application/zip")
 
 
-async def make_mr(file: UploadFile):
+
+async def make_mr(stems: Form, file: UploadFile):
     id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-    separation = mr('audio_processor/mr',id, 2)
-    zip_path, delete_path = separation.separating(file)
-    return zip_path, delete_path                  
+    separation = mr('audio_processor/mr',id)
+    zip_path, zip_name, delete_path = separation.separating(stems, file)
+    print(zip_path, zip_name, delete_path)
+    return zip_path, zip_name, delete_path                  
 
-@app.post("/make_mr/")
-async def song_mr(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
-    zip_path, delete_path = await make_mr(file)
+@app.post("/make_mr/")             
+async def song_mr(
+                    background_tasks: BackgroundTasks, 
+                    stems: int = Form(...), file: UploadFile = File(...)
+                ):
 
+    zip_path, zip_name, delete_path = await make_mr(stems, file)
     background_tasks.add_task(after_delete, delete_path)
+    return FileResponse(zip_path, filename=zip_name, media_type="application/zip")
 
-    return FileResponse(zip_path, filename='output.zip', media_type="application/zip")
 
 
 
