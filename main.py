@@ -17,10 +17,8 @@ from audio_processor.setting_mr import mr
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
-# ff_path를 포함한 전체 경로
 ff_path = os.path.join(current_directory, "ff_path")
 
-# 환경 변수에 현재 디렉토리의 ff_path 추가
 os.environ["PATH"] = f'{os.environ["PATH"]};{ff_path}'
 
 app = FastAPI()
@@ -33,7 +31,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+# 반환이 완료되면 파일들이 쌓이지 않게 반환된 path경로 삭제
 async def after_delete(path):
     shutil.rmtree(path)
 
@@ -59,21 +57,23 @@ async def make_mr(stems: Form, file: UploadFile):
     return zip_path, zip_name, delete_path                  
 
 @app.post("/make_mr/")             
-async def song_mr(
-                    background_tasks: BackgroundTasks, 
-                    stems: int = Form(...), file: UploadFile = File(...)
-                ):
+async def song_mr(background_tasks: BackgroundTasks, stems: int = Form(...), file: UploadFile = File(...)):
 
     zip_path, zip_name, delete_path = await make_mr(stems, file)
     background_tasks.add_task(after_delete, delete_path)
     return FileResponse(zip_path, filename=zip_name, media_type="application/zip")
 
-# async def add_mr(zip_file: UploadFile):
-#     id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-#     separation_to_add = mr('audio_processor/mr', id)
+async def mix_mr(file: UploadFile):
+    id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+    separation_mix = mr('audio_processor/mr', id)
+    zip_path = separation_mix.mix(file)
+    return zip_path
 
-# @app.post("/add_mr/")
-# async def add_song_mr(background_tasks: BackgroundTasks, zip_file: UploadFile = File(...)):
+@app.post("/mix_mr/")
+async def mix_song_mr(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+    path = await mix_mr(file)
+    return path
+    
     
 
 
