@@ -45,7 +45,7 @@ class mr:
         
         return zip_path, zip_name, delete_path
     
-    # 사용자로부터 학습이 완료된 보컬을 받으면 학습된 보컬과 배경음(MR로 분리된 베이스, 드럼, 피아노 등등..) 과 합침
+    # 사용자로부터 학습이 완료된 보컬을 받으면 학습된 보컬과 배경음(MR로 분리된 베이스, 드럼, 피아노 등등..)을 합치는 코드
     def mix(self, zip_file):
 
         path = os.path.join(self.mr_dir, self.mr_id)
@@ -64,10 +64,12 @@ class mr:
             wavs = os.path.join(path, wavs)
             mrs.append(AudioSegment.from_wav(wavs))
             
-        result = sum(mrs)
-        result.export("result.wav", format="wav")
-        return path
+        result_audio = mrs[0]
+        for audio in mrs[1:]:
+            result_audio = result_audio.overlay(audio)
 
-        
-        
-    
+        answer_file_name = "mixed_file.mp3"
+        result_path = os.path.join(path,answer_file_name)
+        result_audio.export(result_path, format="mp3")
+
+        return result_path, path

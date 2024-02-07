@@ -31,7 +31,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 반환이 완료되면 파일들이 쌓이지 않게 반환된 path경로 삭제
+# mr과 dataset에 id 명으로된 폴더들이 쌓이지 않도록 반환이 완료되면 path경로 파일 삭제
 async def after_delete(path):
     shutil.rmtree(path)
 
@@ -66,13 +66,15 @@ async def song_mr(background_tasks: BackgroundTasks, stems: int = Form(...), fil
 async def mix_mr(file: UploadFile):
     id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
     separation_mix = mr('audio_processor/mr', id)
-    zip_path = separation_mix.mix(file)
-    return zip_path
+    return_path, delete_path = separation_mix.mix(file)
+    return return_path, delete_path
 
 @app.post("/mix_mr/")
 async def mix_song_mr(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
-    path = await mix_mr(file)
-    return path
+    return_path, delete_path = await mix_mr(file)
+    background_tasks.add_task(after_delete, delete_path)
+    return FileResponse(return_path, media_type="application/zip")
+
     
     
 
