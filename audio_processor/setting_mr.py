@@ -10,17 +10,18 @@ class mr:
         self.mr_dir = mr_dir
         self.mr_id = mr_id
 
-    # 사용자로부터 stems 정수 값과 file을 받아야함
     def separating(self, stems, file):
 
         path = os.path.join(self.mr_dir)
-        
+
+        file.filename = file.filename.replace(" ", "_")
         save_song = os.path.join(path, file.filename)
         with open(save_song, "wb") as f:
             shutil.copyfileobj(file.file, f)
-        get_file = file.filename
-        name, _ = os.path.splitext(get_file)
 
+        get_file = file.filename
+        get_file = get_file.replace(" ", "_")
+        name, _ = os.path.splitext(get_file)
         
         for song in os.listdir(path):
             if song == get_file:
@@ -45,7 +46,7 @@ class mr:
         
         return zip_path, zip_name, delete_path
     
-    # 사용자로부터 학습이 완료된 보컬을 받으면 학습된 보컬과 배경음(MR로 분리된 베이스, 드럼, 피아노 등등..)을 합치는 코드
+    # 음원 합성
     def mix(self, zip_file):
 
         path = os.path.join(self.mr_dir, self.mr_id)
@@ -71,5 +72,5 @@ class mr:
         answer_file_name = "mixed_file.mp3"
         result_path = os.path.join(path,answer_file_name)
         result_audio.export(result_path, format="mp3")
-        
+
         return result_path, path

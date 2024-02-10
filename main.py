@@ -1,4 +1,3 @@
-#export PATH=$PATH:/c/Users/axels/OneDrive/바탕\ 화면/translation_AI/ffmpeg-6.1.1-full_build/bin
 #export PATH=$PATH:/c/Users/axels/OneDrive/바탕\ 화면/translation_AI/ff_path
 
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException, BackgroundTasks
@@ -84,7 +83,7 @@ async def mix_song_mr(background_tasks: BackgroundTasks, file: UploadFile = File
     background_tasks.add_task(after_delete, delete_path)
     return FileResponse(return_path, media_type="audio/wav")
 
-    
+
     
 
 
