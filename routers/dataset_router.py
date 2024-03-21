@@ -26,7 +26,14 @@ async def processing(
                         background_tasks: BackgroundTasks, 
                         hz: int = Form(...), interval_seconds: int = Form(...), 
                         file: UploadFile = File(...)):
+    try:
+        file_check = ['mp3','wav','m4a']
+        if file.filename.split('.')[-1].lower() not in file_check:
+            raise HTTPException(status_code=400, detail = "not song file")
+        
+        path, delete_path = await make_dataset(hz, interval_seconds, file)
+        background_tasks.add_task(after_delete, delete_path)
+        return FileResponse(path, filename="dataset.zip", media_type="application/zip")
     
-    path, delete_path = await make_dataset(hz, interval_seconds, file)
-    background_tasks.add_task(after_delete, delete_path)
-    return FileResponse(path, filename="dataset.zip", media_type="application/zip")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
