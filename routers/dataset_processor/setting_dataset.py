@@ -19,16 +19,14 @@ class data_processing:
         path = os.path.join(self.dataset_dir, self.wav_id)
         os.makedirs(path, exist_ok=True)
 
+        if file.filename.lower().endswith('.mp3') or file.filename.lower().endswith('.m4a'):
+            file.filename = file.filename.split('.')[0] + '.wav'
+            
         file_path = os.path.join(path, file.filename)
+        print(file_path, file.filename, file)
 
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
-
-        # .mp3또는 .m4a 파일을 wav파일로 변환
-        if file.filename.lower().endswith('.mp3') or file.filename.lower().endswith('.m4a'):
-            path = os.path.join(file_path, file.filename)
-            file_path = os.path.splitext(path)[0] + '.wav'
-            os.rename(path, file_path)
 
         # 사용자로 부터 받은 interval_second 단위(초)로 wav에 hz 값을 반영
         y, sr = librosa.load(file_path, sr=self.hz[0], mono=True)
