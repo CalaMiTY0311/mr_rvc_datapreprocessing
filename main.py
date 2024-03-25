@@ -14,6 +14,7 @@ import subprocess
 # from mr_rvc_datapreprocessing.routers.dataset_processor.setting_dataset import data_processing
 # from mr_rvc_datapreprocessing.routers.mr_processor.setting_mr import mr
 from routers.dataset_router import dataset_api
+from routers.mr_router import mr_api
 
 # current_directory = os.path.dirname(os.path.abspath(__file__))
 # ff_path = os.path.join(current_directory, "ff_path")
@@ -21,6 +22,7 @@ from routers.dataset_router import dataset_api
 
 app = FastAPI()
 app.include_router(dataset_api)
+app.include_router(mr_api)
 
 app.add_middleware(
     CORSMiddleware,
@@ -37,23 +39,6 @@ def hello():
 # # mr과 dataset에 id 명으로된 폴더들이 쌓이지 않도록 반환이 완료되면 path경로 파일 삭제
 # async def after_delete(path):
 #     shutil.rmtree(path)
-
-# # 실시간 음성 변환을 하기 전 학습에 필요한 데이터셋을 hz와 interval_seconds에 맞게 변환
-# # interval_seconds <- 예를 들어 값이 15이면 학습시키기위한 데이터셋이 15초 간격으로 나뉘어질것이고
-# # hz의 값을 본인이 원하는대로 값으로 변경가능 ( 모델마다 특정 hz에 맞춰줘야하기에 필요로하여 구현 )
-# async def make_dataset(hz: Form, interval_seconds: Form, file: UploadFile):
-#     wav_id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-#     processor = data_processing('audio_processor/dataset', interval_seconds, hz, wav_id)
-#     zip_path, delete_path = processor.processing(file)
-
-#     return zip_path, delete_path
-
-# @app.post("/make_dataset/")
-# async def processing(background_tasks: BackgroundTasks, hz: int = Form(...), interval_seconds: int = Form(...), file: UploadFile = File(...)):
-#     path, delete_path = await make_dataset(hz, interval_seconds, file)
-#     background_tasks.add_task(after_delete, delete_path)
-#     return FileResponse(path, filename="dataset.zip", media_type="application/zip")
-
 
 # # MR (Music Recorded) 이란 노래반주 및 연주음 감상을 목적으로 가수의 목소리가 빠진 연주만으로 제작된 음원을 지칭한다.
 # # stems는 Form로 입력 받으며 2,4,5의 값 만 들어갈수있음 

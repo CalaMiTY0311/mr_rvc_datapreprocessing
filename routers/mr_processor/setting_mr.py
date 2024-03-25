@@ -6,45 +6,53 @@ from pydub import AudioSegment
 
 
 class mr:
-    def __init__(self, mr_dir, mr_id):
+    def __init__(self, mr_dir):
         self.mr_dir = mr_dir
-        self.mr_id = mr_id
 
     def separating(self, stems, file):
 
         path = os.path.join(self.mr_dir)
 
         file.filename = file.filename.replace(" ", "_")
-        save_song = os.path.join(path, file.filename)
-        with open(save_song, "wb") as f:
+        file_path = os.path.join(path, file.filename)
+        print(file_path)
+        with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
 
-        get_file = file.filename
-        get_file = get_file.replace(" ", "_")
-        name, _ = os.path.splitext(get_file)
-        
+        name, _ = os.path.splitext(file.filename)
+
         for song in os.listdir(path):
-            if song == get_file:
+            if song == file.filename:
                 # 사용자로 부터 받은 mp3형태의 노래 파일을 stems 값에 따라 분리
                 spl = r'spleeter separate -p spleeter:' + \
-                str(stems) + r'stems -o ' + os.path.join(path, self.mr_id) + ' ' + os.path.join(path, name) + '.mp3'
+                str(stems) + r'stems -o ' + os.path.join(path) + ' ' + os.path.join(path, name) + '.mp3'
                 flag = subprocess.run(spl, shell=True)
-                os.remove(os.path.join(path, get_file))
-
-        zip_name = f'{stems}_{name}.zip'
-        zip_path = os.path.join(path, self.mr_id, name, zip_name)
-
-        # mp3파일을 MR 분리 후 사용자에게 zip형태로 반환
-        with zipfile.ZipFile(zip_path, 'w') as zipf:
-            result_path = os.path.join(self.mr_dir, self.mr_id, name)
-            for files in os.listdir(result_path):
-                if files.lower().endswith('.wav'):
-                    result = os.path.join(result_path, files)
-                    zipf.write(result, os.path.basename(result))
+                os.remove(os.path.join(path, file.filename))
         
-        delete_path = os.path.join(path, self.mr_id)
+        zip_name = f'{stems}_{name}'
+        zip_path = os.path.join(path, name)
+        send_path = os.path.join(path,name)
+
+        # # mp3파일을 MR 분리 후 사용자에게 zip형태로 반환
+        # with zipfile.ZipFile(zip_path, 'w') as zipf:
+        #     result_path = os.path.join(self.mr_dir, self.mr_id, name)
+        #     for files in os.listdir(result_path):
+        #         if files.lower().endswith('.wav'):
+        #             result = os.path.join(result_path, files)
+        #             zipf.write(result, os.path.basename(result))
+
+        # print(zip_path, name)
+        # for file in os.listdir(zip_path):
+        #     print(file)
+        
+        shutil.make_archive(zip_path,'zip',zip_path)
+
+        delete_path = os.path.join(path)
+
         
         return zip_path, zip_name, delete_path
+
+        
     
     # 음원 합성
     def mix(self, zip_file):

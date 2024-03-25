@@ -15,7 +15,7 @@ class data_processing:
         self.wav_id = wav_id
 
     def processing(self,file):
-        
+
         path = os.path.join(self.dataset_dir, self.wav_id)
         os.makedirs(path, exist_ok=True)
 
