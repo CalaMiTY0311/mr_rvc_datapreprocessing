@@ -6,12 +6,14 @@ from pydub import AudioSegment
 
 
 class mr:
-    def __init__(self, mr_dir):
+    def __init__(self, mr_dir, mr_id):
         self.mr_dir = mr_dir
+        self.mr_id = mr_id
 
     def separating(self, stems, file):
 
-        path = os.path.join(self.mr_dir)
+        path = os.path.join(self.mr_dir,self.mr_id)
+        os.makedirs(path, exist_ok=True)
 
         file.filename = file.filename.replace(" ", "_")
         file_path = os.path.join(path, file.filename)
@@ -26,31 +28,17 @@ class mr:
                 # 사용자로 부터 받은 mp3형태의 노래 파일을 stems 값에 따라 분리
                 spl = r'spleeter separate -p spleeter:' + \
                 str(stems) + r'stems -o ' + os.path.join(path) + ' ' + os.path.join(path, name) + '.mp3'
-                flag = subprocess.run(spl, shell=True)
+                subprocess.run(spl, shell=True)
                 os.remove(os.path.join(path, file.filename))
-        
-        zip_name = f'{stems}_{name}'
-        zip_path = os.path.join(path, name)
-        send_path = os.path.join(path,name)
 
-        # # mp3파일을 MR 분리 후 사용자에게 zip형태로 반환
-        # with zipfile.ZipFile(zip_path, 'w') as zipf:
-        #     result_path = os.path.join(self.mr_dir, self.mr_id, name)
-        #     for files in os.listdir(result_path):
-        #         if files.lower().endswith('.wav'):
-        #             result = os.path.join(result_path, files)
-        #             zipf.write(result, os.path.basename(result))
+                make_zip = os.path.join(path, name)
+                send_path = name + ".zip"
+                send_path = os.path.join(path, send_path)
+                print(path)
+                shutil.make_archive(make_zip,'zip', make_zip)
+                shutil.rmtree(make_zip)
 
-        # print(zip_path, name)
-        # for file in os.listdir(zip_path):
-        #     print(file)
-        
-        shutil.make_archive(zip_path,'zip',zip_path)
-
-        delete_path = os.path.join(path)
-
-        
-        return zip_path, zip_name, delete_path
+        return send_path, name, path
 
         
     
@@ -81,4 +69,4 @@ class mr:
         result_path = os.path.join(path,answer_file_name)
         result_audio.export(result_path, format="mp3")
 
-        return result_path, path
+        return send_zip, path
