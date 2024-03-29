@@ -43,15 +43,15 @@ class mr:
         
     
     # 음원 합성
-    def mix(self, zip_file):
+    def mix(self, file):
 
         path = os.path.join(self.mr_dir, self.mr_id)
         os.makedirs(path, exist_ok=True) 
 
-        copy_path = os.path.join(path, zip_file.filename)
+        copy_path = os.path.join(path, file.filename)
 
         with open(copy_path, "wb") as f:
-            shutil.copyfileobj(zip_file.file, f)
+            shutil.copyfileobj(file.file, f)
 
         shutil.unpack_archive(copy_path, path, "zip")
         os.remove(copy_path)

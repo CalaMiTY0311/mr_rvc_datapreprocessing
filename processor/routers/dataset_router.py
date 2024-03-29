@@ -11,6 +11,11 @@ dataset_api = APIRouter()
 async def after_delete(path):
     shutil.rmtree(path)
 
+@dataset_api.get("/hello_dataset/")
+async def hello_dataset():
+    return {"message": "Hello world"}
+
+
 async def make_dataset(hz: Form, interval_seconds: Form, file: UploadFile):
     wav_id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
     processor = data_processing('routers/dataset_processor', interval_seconds, hz, wav_id)
@@ -25,13 +30,11 @@ async def processing(
                         interval_seconds: int = Form(None), 
                         file: UploadFile = File(...)):
     
-    # 파일만 받았을 때 디폴트 값
     if hz is None:
         hz = 16000
     if interval_seconds is None:
         interval_seconds = 15
 
-    # 음악파일 외 파일이라면 에러 handle
     try:
         file_check = ['mp3','wav','m4a']
         if file.filename.split('.')[-1].lower() not in file_check:

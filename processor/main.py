@@ -7,12 +7,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-# from routers.dataset_router import dataset_api
-# from routers.mr_router import mr_api
+from routers.dataset_router import dataset_api
+from routers.mr_router import mr_api
 
 app = FastAPI()
-# app.include_router(dataset_api)
-# app.include_router(mr_api)
+app.include_router(dataset_api)
+app.include_router(mr_api)
 
 app.add_middleware(
     CORSMiddleware,
@@ -23,7 +23,7 @@ app.add_middleware(
 )
 
 @app.get("/")
-def main():
+async def main():
     return {"message": "Hello world"}
 
 # # 음원들에 대해 하나의 음악으로 섞어 하나의 결과물로 만들 수 있도록함
@@ -39,31 +39,6 @@ def main():
 #     background_tasks.add_task(after_delete, delete_path)
 #     return FileResponse(return_path, media_type="audio/wav")
 
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# @app.get("/")
-# async def root():
-#     return {"message": "Hello World"}
 
 
 if __name__=='__main__': 
