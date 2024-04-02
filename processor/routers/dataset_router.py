@@ -25,11 +25,14 @@ async def make_dataset(hz: Form, interval_seconds: Form, file: UploadFile):
 
 @dataset_api.post("/make_dataset/")
 async def processing(
-                        background_tasks: BackgroundTasks, 
-                        hz: int = Form(None), 
-                        interval_seconds: int = Form(None), 
-                        file: UploadFile = File(...)):
+                    background_tasks: BackgroundTasks, 
+                    hz: int = Form(None), 
+                    interval_seconds: int = Form(None), 
+                    file: UploadFile = File(...)
+                    ):
     
+    print("file :",file,file.filename)
+
     if hz is None:
         hz = 16000
     if interval_seconds is None:
