@@ -18,7 +18,14 @@ async def make_mr(stems: Form, file: UploadFile):
     return send_path, name, path
 
 @mr_api.post("/make_mr/")             
-async def song_mr(background_tasks: BackgroundTasks, stems: int = Form(...), file: UploadFile = File(...)):
+async def song_mr(
+                    background_tasks: BackgroundTasks, 
+                    stems: int = Form(None), 
+                    file: UploadFile = File(...)):
+    
+    if stems is None:
+        stems = 2
+
     try:
         file_check = ['mp3','wav','m4a']
         if file.filename.split('.')[-1].lower() not in file_check:
