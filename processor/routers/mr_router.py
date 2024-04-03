@@ -12,7 +12,7 @@ async def after_delete(path):
 
 async def make_mr(stems: Form, file: UploadFile):
     id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-    separation = mr('routers/mr_processor',id)
+    separation = mr('processor/routers/mr_processor',id)
     send_path, name, path = separation.separating(stems, file)
     # print(send_zip, name)
     return send_path, name, path
@@ -38,7 +38,7 @@ async def song_mr(
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-# 음원들에 대해 하나의 음악으로 섞어 하나의 결과물로 만들 수 있도록함
+
 async def mix_mr(file: UploadFile):
     id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
     separation_mix = mr('routers/mr_processor', id)

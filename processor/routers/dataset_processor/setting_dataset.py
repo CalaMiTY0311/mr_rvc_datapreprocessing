@@ -19,7 +19,7 @@ class data_processing:
         path = os.path.join(self.dataset_dir, self.wav_id)
         os.makedirs(path, exist_ok=True)
 
-        if file.filename.lower().endswith('.mp3') or file.filename.lower().endswith('.m4a'):
+        if file.filename.lower().endswith('.mp3'):
             file.filename = file.filename.split('.')[0] + '.wav'
             
         file_path = os.path.join(path, file.filename)

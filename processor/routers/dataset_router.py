@@ -18,7 +18,7 @@ async def hello_dataset():
 
 async def make_dataset(hz: Form, interval_seconds: Form, file: UploadFile):
     wav_id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-    processor = data_processing('routers/dataset_processor', interval_seconds, hz, wav_id)
+    processor = data_processing('processor/routers/dataset_processor', interval_seconds, hz, wav_id)
     zip_path, delete_path = processor.processing(file)
 
     return zip_path, delete_path

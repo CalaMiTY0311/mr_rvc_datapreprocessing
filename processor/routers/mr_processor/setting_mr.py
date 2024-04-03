@@ -25,7 +25,6 @@ class mr:
 
         for song in os.listdir(path):
             if song == file.filename:
-                # 사용자로 부터 받은 mp3형태의 노래 파일을 stems 값에 따라 분리
                 spl = r'spleeter separate -p spleeter:' + \
                 str(stems) + r'stems -o ' + os.path.join(path) + ' ' + os.path.join(path, name) + '.mp3'
                 subprocess.run(spl, shell=True)
