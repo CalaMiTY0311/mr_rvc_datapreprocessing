@@ -12,10 +12,10 @@ async def after_delete(path):
 
 async def make_mr(stems: Form, file: UploadFile):
     id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-    separation = mr('processor/routers/mr_processor',id)
-    send_path, name, path = separation.separating(stems, file)
+    separation = mr('routers/mr_processor',id)
+    send_path,path = separation.separating(stems, file)
     # print(send_zip, name)
-    return send_path, name, path
+    return send_path,path
 
 @mr_api.post("/make_mr/")             
 async def song_mr(
@@ -27,13 +27,13 @@ async def song_mr(
         stems = 2
 
     try:
-        file_check = ['mp3','wav','m4a']
+        file_check = ['mp3','wav']
         if file.filename.split('.')[-1].lower() not in file_check:
             raise HTTPException(status_code=400, detail = "not song file")
         
-        send_path, name, path = await make_mr(stems, file)
+        send_path,path = await make_mr(stems, file)
         background_tasks.add_task(after_delete, path)
-        return FileResponse(send_path, filename=name, media_type="application/zip")
+        return FileResponse(send_path,  media_type="application/zip")
     
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

@@ -17,7 +17,7 @@ class mr:
 
         file.filename = file.filename.replace(" ", "_")
         file_path = os.path.join(path, file.filename)
-        print(file_path)
+
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
 
@@ -33,11 +33,12 @@ class mr:
                 make_zip = os.path.join(path, name)
                 send_path = name + ".zip"
                 send_path = os.path.join(path, send_path)
-                print(path)
+                print(make_zip,send_path)
+                # print(path)
                 shutil.make_archive(make_zip,'zip', make_zip)
                 shutil.rmtree(make_zip)
 
-        return send_path, name, path
+        return send_path,path
 
         
     
