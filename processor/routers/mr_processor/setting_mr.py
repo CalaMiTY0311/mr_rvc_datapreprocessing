@@ -69,4 +69,4 @@ class mr:
         result_path = os.path.join(path,answer_file_name)
         result_audio.export(result_path, format="mp3")
 
-        return send_zip, path
+        return result_path, path

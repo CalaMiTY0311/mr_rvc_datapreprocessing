@@ -8,24 +8,26 @@ import shutil
 
 dataset_api = APIRouter()
 
-async def after_delete(path):
+def after_delete(path):
     shutil.rmtree(path)
 
-async def make_dataset(hz: Form, interval_seconds: Form, file: UploadFile):
+def make_dataset(hz: Form, interval_seconds: Form, file: UploadFile):
     wav_id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
     processor = data_processing('routers/dataset_processor', interval_seconds, hz, wav_id)
     zip_path, delete_path = processor.processing(file)
 
     return zip_path, delete_path
 
+import time
+
 @dataset_api.post("/make_dataset/")
-async def processing(
+def processing(
                     background_tasks: BackgroundTasks, 
                     hz: int = Form(None), 
                     interval_seconds: int = Form(None), 
                     file: UploadFile = File(...)
                     ):
-
+    start = time.time()
     # default hz and interval_seconds
     if hz is None:
         hz = 16000
@@ -36,9 +38,12 @@ async def processing(
         file_check = ['mp3','wav']
         if file.filename.split('.')[-1].lower() not in file_check:
             raise HTTPException(status_code=400, detail = "not song file")
-        
-        path, delete_path = await make_dataset(hz, interval_seconds, file)
+                            # await
+        path, delete_path = make_dataset(hz, interval_seconds, file)
         background_tasks.add_task(after_delete, delete_path)
+
+        end = time.time()
+        print(end - start)
         return FileResponse(path, 
                             # filename="dataset.zip", 
                             media_type="application/zip")
