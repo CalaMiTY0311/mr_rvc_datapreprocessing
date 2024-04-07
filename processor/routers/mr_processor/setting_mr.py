@@ -16,6 +16,8 @@ class mr:
         os.makedirs(path, exist_ok=True)
 
         file.filename = file.filename.replace(" ", "_")
+        if file.filename.lower().endswith('.wav'):
+            file.filename = file.filename.split('.')[0] + '.mp3'
         file_path = os.path.join(path, file.filename)
 
         with open(file_path, "wb") as f:

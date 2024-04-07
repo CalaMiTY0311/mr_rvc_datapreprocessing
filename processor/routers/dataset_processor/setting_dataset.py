@@ -21,7 +21,6 @@ class data_processing:
             file.filename = file.filename.split('.')[0] + '.wav'
             
         file_path = os.path.join(path, file.filename)
-
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
 
@@ -32,8 +31,9 @@ class data_processing:
             sf.write(output_file, segment, sr, subtype='PCM_16')
         
         os.remove(file_path)
+
         zip_path = os.path.join(path, 'dataset.zip')
-        print(zip_path)
+        # print(zip_path)
         with zipfile.ZipFile(zip_path, 'w') as zipf:
             for wavs in os.listdir(path):
                 if wavs.lower().endswith('.wav'):

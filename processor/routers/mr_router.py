@@ -21,11 +21,12 @@ import time
 
 @mr_api.post("/make_mr/")             
 def song_mr(
-                    background_tasks: BackgroundTasks, 
-                    stems: int = Form(None), 
-                    file: UploadFile = File(...)):
-    
+            background_tasks: BackgroundTasks, 
+            stems: int = Form(None), 
+            file: UploadFile = File(...)):
     start = time.time()
+
+    
     if stems is None:
         stems = 2
 
@@ -39,6 +40,9 @@ def song_mr(
 
         end = time.time()
         print(end - start)
+
+        # print(file.file)
+        # print(FileResponse(send_path,  media_type="application/zip"))
 
         return FileResponse(send_path,  media_type="application/zip")
     
