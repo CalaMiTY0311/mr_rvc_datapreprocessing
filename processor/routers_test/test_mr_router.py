@@ -3,6 +3,11 @@ from routers.mr_router import mr_api
 from routers_test.filepath import filepath
 import os
 
+dir = os.path.dirname(os.path.abspath(__file__))
+dir = os.path.dirname(dir)
+ff_path = os.path.join(dir, "ff_path")
+os.environ["PATH"] = f'{os.environ["PATH"]};{ff_path}'
+
 client = TestClient(mr_api)
 
 def test_make_mr():
@@ -28,3 +33,4 @@ def test_mix_mr():
     response = client.post("/mix_mr/",files=testfile)
     print(response)
     assert response.status_code == 200
+
