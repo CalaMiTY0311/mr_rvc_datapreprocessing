@@ -1,16 +1,19 @@
 # mr_rvc_datapreprocessing
 mp3, wav파일 dataset화 및 MR분리 및 합성하는 API 입니다.
 
-## Requirements
+## 개발 환경
 
-Python 3.9
+운영 체제 : 윈도우
+언어 : Python(v3.9)
+프레임워크 : FastAPI
+
+## GetStart
 
 1. Install dependencies
 ```zsh
 pip install -r requirements.txt
 ```
-2. Start FastAPI process
+2. FastAPI 실행
 ```zsh
-python main.py
+uvicorn main:app
 ```
-3. Open local API docs [http://localhost:5000/docs](http://localhost:5000/docs)
