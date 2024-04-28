@@ -45,7 +45,7 @@ def song_mr(
         # print(FileResponse(send_path,  media_type="application/zip"))
 
         return FileResponse(send_path,  media_type="application/zip")
-    
+
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
