@@ -10,10 +10,10 @@ AI 커버 컨텐츠에 대해 RVC 음성합성기술 모델 활용에 기여하�
 ## GetStart
 
 **윈도우에서 MR분리를 사용하기 위해서는 ffmpeg를 따로 설치가 필요합니다.** </br>
-다운로드사이트에서 설치 후 디렉토리 명만 같게 설정하면 완료입니다.
+다운로드사이트에서 설치 후 디렉토리 명만 동일하게 설정하면 완료입니다.
 ![ffmpeg](https://github.com/CalaMiTY0311/mr_rvc_datapreprocessing/assets/64539279/c46e8a44-7e19-4363-9bab-9600c87c119e)
 
-**다운로드 사이트**
+**다운로드 사이트** </br>
 <a>https://www.ffmpeg.org/download.html</a>
 
 1. Install dependencies
