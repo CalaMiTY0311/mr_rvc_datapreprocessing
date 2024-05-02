@@ -20,8 +20,8 @@ AI 커버 컨텐츠에 대해 RVC 음성합성기술 모델 활용에 기여하�
 ```zsh
 - os: window
 - python: 3.9.17
-- tensorflow: 2.9.3
-- fastapi: 0.68.0 
+- fastapi: 0.103.1
+- scikit-learn: 1.3.0
 ```
 1. Install dependencies
 ```zsh
