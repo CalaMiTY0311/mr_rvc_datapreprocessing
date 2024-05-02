@@ -16,6 +16,13 @@ AI 커버 컨텐츠에 대해 RVC 음성합성기술 모델 활용에 기여하�
 **다운로드 사이트** </br>
 <a>https://www.ffmpeg.org/download.html</a>
 
+구축환경
+```zsh
+- os: window
+- python: 3.9.17
+- tensorflow: 2.9.3
+- fastapi: 0.68.0 
+```
 1. Install dependencies
 ```zsh
 pip install -r requirements.txt
